@@ -526,7 +526,7 @@ const job = schedule.scheduleJob(process.env.TIME_CRAWLER, async function() {
     getNovelUrls(1,3);
 });
 
-const job_30_page = schedule.scheduleJob(process.env.TIME_CRAWLER, async function() {
+const job_30_page = schedule.scheduleJob(process.env.TIME_CRAWLER_2, async function() {
     getNovelUrls(4,34);
 });
 
