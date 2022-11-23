@@ -369,7 +369,8 @@ const getNovel = async function (config, callback) {
                             "Search FreeWebNovel.Com for the original.",
                             "The Novel will be updated first on Freeᴡebnᴏvel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
                             "The Novel will be updated first on Freeᴡebn(ᴏ)vel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
-                            "If you want to read more chapters, Please visit Freewebn(ᴏv)el. c0m to experience faster update speed."
+                            "If you want to read more chapters, Please visit Freewebn(ᴏv)el. c0m to experience faster update speed.",
+                            "Theft is never good, try looking at FreeWebNovel.Com."
                             
                         ]
                         for (let tag_idx = 0; tag_idx < tags.length; tag_idx++) {
