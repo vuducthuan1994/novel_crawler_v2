@@ -363,6 +363,7 @@ const getNovel = async function (config, callback) {
                             "This novel is available on FreeWebNovel.Com.",
                             "Search FreeWebNovel.Com for the original.",
                             "The Novel will be updated first on Freeᴡebnᴏvel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
+                            "The Novel will be updated first on Freeᴡebn(ᴏ)vel. cᴏm . Come back and continue reading tomorrow, everyone!😉"
                             
                         ]
                         for (let tag_idx = 0; tag_idx < tags.length; tag_idx++) {
