@@ -362,7 +362,8 @@ const getNovel = async function (config, callback) {
                             "Find the original at FreeWebNovel.Com.",
                             "This novel is available on FreeWebNovel.Com.",
                             "Search FreeWebNovel.Com for the original.",
-                            "The Novel will be updated first on this website. Come back and continue reading tomorrow, everyone!"
+                            "The Novel will be updated first on Freeᴡebnᴏvel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
+                            
                         ]
                         for (let tag_idx = 0; tag_idx < tags.length; tag_idx++) {
                             chapterDetail['chapter_content'] = chapterDetail['chapter_content'].replace(tags[tag_idx], "");
