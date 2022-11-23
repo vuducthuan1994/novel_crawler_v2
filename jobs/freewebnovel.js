@@ -470,6 +470,9 @@ const checkChapterExits = function (novel_id, chapter_id, chapter_name) {
     if (/(.*?)(Chapter|chapter) ([+]?([0-9]*[.])?[0-9]+)[(-|" ")]?[(]?(Part|part) ([+]?([0-9]*[.])?[0-9]+)[)]?/.test(`${chapter_name}`)) {
         chapterNumber = /(.*?)(Chapter|chapter) ([+]?([0-9]*[.])?[0-9]+)[(-|" ")]?[(]?(Part|part) ([+]?([0-9]*[.])?[0-9]+)[)]?/.exec(`${chapter_name}`)[0];
     }
+    if(/(.*?)(Chapter|chapter) ([+]?([0-9]*[.])?[0-9]+)(.*?)[(]?(Part|part)? ?([+]?([0-9]*[.])?[0-9]+)[)]?/.test(`${chapter_name}`)) {
+        chapterNumber = /(.*?)(Chapter|chapter) ([+]?([0-9]*[.])?[0-9]+)(.*?)[(]?(Part|part)? ?([+]?([0-9]*[.])?[0-9]+)[)]?/.exec(`${chapter_name}`)[0];
+    }
     if (/(.*?)Chapter ([+]?([0-9]*[.])?[0-9]+) ?([(][0-9][)])/.test(`${chapter_name}`)) {
         chapterNumber = /(.*?)Chapter ([+]?([0-9]*[.])?[0-9]+) ?([(][0-9][)])/.exec(`${chapter_name}`)[0];
     }
