@@ -15,6 +15,8 @@ const CacheService = require('../cache/cache_service');
 const cacheHelper = new CacheService();
 const schedule = require('node-schedule');
 
+
+
 const writeLog = function (msg) {
     fs.appendFile('./log.txt', `${msg} \r\n`, function (err) {
         if (err) {
@@ -276,11 +278,14 @@ const getNovel = async function (config, callback) {
         let total_chapter_crawler = await countChapter(novelInfo['novel_id']);
         console.log(`TONG SO CHAPTER ${novelInfo['novel_name']} DA CAO`, total_chapter_crawler);
         console.log(`TONG SO CHAPTER ${novelInfo['novel_name']} VICTIM`, novelInfo.chapters.length);
-        // if(total_chapter_crawler < novelInfo.chapters.length) {
-        //     writeLog(`TONG SO CHAPTER ${novelInfo['novel_name']} DA CAO ${total_chapter_crawler}`);
-        //     writeLog(`TONG SO CHAPTER ${novelInfo['novel_name']} VICTIM ${novelInfo.chapters.length}`)
-        //     writeLog(`\n`);
-        // }
+        if(process.env.ENV == 'DEV') {
+            if(total_chapter_crawler < novelInfo.chapters.length) {
+                writeLog(`TONG SO CHAPTER ${novelInfo['novel_name']} DA CAO ${total_chapter_crawler}`);
+                writeLog(`TONG SO CHAPTER ${novelInfo['novel_name']} VICTIM ${novelInfo.chapters.length}`)
+                writeLog(`\n`);
+            }
+        }
+      
 
         for (let j = total_chapter_crawler; j < novelInfo.chapters.length; j++) {
             const chapter_victim_url = novelInfo.chapters[j].chapter_url;
@@ -310,7 +315,7 @@ const getNovel = async function (config, callback) {
                             chapter_content: chapter_content
                         }
                     });
-                    chapterDetail['chapter_id'] = slug(`ccc${chapterDetail.chapter_name}`);
+                    chapterDetail['chapter_id'] = slug(`c${chapterDetail.chapter_name}`);
                     chapterDetail['crawler_date'] = new Date()
                     chapterDetail['novel'] = {
                         novel_id: novelInfo['novel_id'],
@@ -363,7 +368,8 @@ const getNovel = async function (config, callback) {
                             "This novel is available on FreeWebNovel.Com.",
                             "Search FreeWebNovel.Com for the original.",
                             "The Novel will be updated first on Freeᴡebnᴏvel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
-                            "The Novel will be updated first on Freeᴡebn(ᴏ)vel. cᴏm . Come back and continue reading tomorrow, everyone!😉"
+                            "The Novel will be updated first on Freeᴡebn(ᴏ)vel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
+                            "If you want to read more chapters, Please visit Freewebn(ᴏv)el. c0m to experience faster update speed."
                             
                         ]
                         for (let tag_idx = 0; tag_idx < tags.length; tag_idx++) {
