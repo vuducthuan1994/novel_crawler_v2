@@ -10,12 +10,60 @@ const slug = require('slug')
 const fs = require('fs')
 const express = require('express');
 const router = express.Router();
-const BASE_URL = 'https://freewebnovel.com/latest-release-novels/';
+const BASE_URL = 'https://libread.com/sort/latest-release-novel/';
 const CacheService = require('../cache/cache_service');
 const cacheHelper = new CacheService();
 const schedule = require('node-schedule');
 
-
+const tags = [
+    'ɴᴇᴡ ɴᴏᴠᴇʟ ᴄʜᴀᴘᴛᴇʀs ᴀʀᴇ ᴘᴜʙʟɪsʜᴇᴅ ᴏɴ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ',
+    'ɪꜰ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ʀᴇᴀᴅ ᴍᴏʀᴇ ᴄʜᴀᴘᴛᴇʀs, ᴘʟᴇᴀsᴇ ᴠɪsɪᴛ ꜰʀᴇᴇᴡᴇʙɴ(o)ᴠᴇʟ.ᴄᴏᴍ ᴛᴏ ᴇxᴘᴇʀɪᴇɴᴄᴇ ꜰᴀsᴛᴇʀ ᴜᴘᴅᴀᴛᴇ sᴘᴇᴇᴅ.',
+    'ʀᴇᴀᴅ ʟᴀᴛᴇsᴛ ᴄʜᴀᴘᴛᴇʀs ᴀᴛ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄoᴍ ᴏɴʟʏ.',
+    'ᴛʜɪs ᴄʜᴀᴘᴛᴇʀ ɪs ᴜᴘᴅᴀᴛᴇ ʙʏ ꜰʀᴇᴇᴡᴇʙɴ(o)ᴠᴇʟ. ᴄᴏᴍ.',
+    'ᴜᴘᴅᴀᴛᴇ ꜰʀᴏᴍ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ.',
+    'New novel chapters are published on  Freeᴡebn(ᴏ)vel.cᴏm.',
+    'Follow current novels on  Freewebn(o)vel.com.',
+    'This chapter is updated by  Freewebn(o)vel.cᴏm',
+    'The source of this content is  Freeᴡebn(ᴏ)vel.cᴏm.',
+    'Visit (Myb o xn ov e l. com) to read, pls!',
+    'Continue reading on MYB0X N0 VEL. COM',
+    'New novel chapters are published on Freewebnᴏvel.cᴏm',
+    'Follow current novels on Freeᴡebnovel.cᴏm',
+    'The source of this content is Freewebnᴏvel.com',
+    'This chapter is updated by Freeᴡebnᴏvel.cᴏm',
+    'Freeᴡebnᴏvel.cᴏm',
+    'Freewebnᴏvel.com',
+    'Freeᴡebnovel.cᴏm',
+    'Freewebnᴏvel.cᴏm',
+    'Freeᴡebn(ᴏ)vel.cᴏm',
+    'Freewebn(o)vel.com',
+    'Freewebn(o)vel.cᴏm',
+    'ꜰʀᴇᴇᴡᴇʙɴoᴠᴇʟ.ᴄᴏᴍ',
+    'ꜰʀᴇᴇ ᴡᴇʙ ɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ',
+    'ꜰʀᴇᴇ ᴡᴇʙ ɴ(o)ᴠᴇʟ',
+    'ꜰʀᴇᴇ ᴡᴇʙ ɴ(o)ᴠᴇʟ. ᴄoᴍ',
+    'ꜰʀᴇᴇᴡᴇʙɴᴏᴠᴇʟ.ᴄᴏᴍ',
+    'Visit (Mybo x novel. com) to read, pls!',
+    'If you want to read more chapters, Please visit Libread.com to experience faster update speed',
+    'If you want to read more chapters, Please visit Libread.com to experience faster update speed.',
+    'Visit ʟɪʙʀᴇᴀᴅ.ᴄᴏᴍ for a better_user experience',
+    'Visit ʟɪʙʀᴇᴀᴅ.ᴄoᴍ, for the best no_vel_read_ing experience',
+    'The latest_epi_sodes are on_the ʟɪʙʀᴇᴀᴅ.ᴄᴏᴍ.website.',
+    'New novel ᴄhapters are published on Libread.cᴏm.',
+    'Follow current novels on Libread.ᴄom.',
+    'The source of this ᴄontent is  Libread.com.',
+    'This chapter is updated by  Libread.cᴏm.',
+    'Support us at FreeWebNovel.Com.',
+    'We are FreeWebNovel.Com, find us on google.',
+    "When you're just trying to make great content at FreeWebNovel.Com.",
+    "Find the original at FreeWebNovel.Com.",
+    "This novel is available on FreeWebNovel.Com.",
+    "Search FreeWebNovel.Com for the original.",
+    "The Novel will be updated first on Freeᴡebnᴏvel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
+    "The Novel will be updated first on Freeᴡebn(ᴏ)vel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
+    "If you want to read more chapters, Please visit Freewebn(ᴏv)el. c0m to experience faster update speed.",
+    "Theft is never good, try looking at FreeWebNovel.Com."
+]
 
 const writeLog = function (msg) {
     fs.appendFile('./log.txt', `${msg} \r\n`, function (err) {
@@ -76,7 +124,7 @@ let download_banner = async function (comic_victim_url, file_name) {
 };
 router.get('/testJob', async function (req, res) {
     crawler_quece.push({
-        url: 'https://freewebnovel.com/novel/emperors-domination.html'
+        url: 'https://libread.com/novel/emperors-domination.html'
     });
     return res.json({
         success: true,
@@ -236,7 +284,7 @@ const getNovel = async function (config, callback) {
         if (novel_on_db) {
             novelInfo['novel_id'] = novel_on_db.novel_id;
         }
-        const chapter_url = `https://freewebnovel.com/api/chapterlist.php?aid=${novelInfo['novel_victim_id']}&acode=${novelUrl.match(/.*\/(.*)$/)[1].replace('.html', '').trim()}&cid=1`
+        const chapter_url = `https://libread.com/api/chapterlist.php?aid=${novelInfo['novel_victim_id']}&acode=${novelUrl.match(/.*\/(.*)$/)[1].replace('.html', '').trim()}&cid=1`
         await page.goto(chapter_url);
         let chapters = await page.evaluate(async () => {
             let chapters = [];
@@ -245,7 +293,7 @@ const getNovel = async function (config, callback) {
                 let chapterUrl = chapterItem.value.replaceAll('"', '').replaceAll('\\', '');
                 let chapterName = chapterItem.label.replace(`?C.`, 'Chapter ').replace('C.', 'Chapter ').replace("<\\/option>", '').replace("Chpater", "Chapter").replace('&#xFEFF;', '').trim();
                 chapters.push({
-                    chapter_url: `https://freewebnovel.com` + chapterUrl,
+                    chapter_url: `https://libread.com` + chapterUrl,
                     chapter_name: chapterName.replace(`"}`, '')
                 })
             });
@@ -323,56 +371,7 @@ const getNovel = async function (config, callback) {
                     }
                     let __idx = j;
                     if (chapterDetail['chapter_content'].length || chapterDetail['chapter_content'].includes('img')) {
-                        const tags = [
-                            'ɴᴇᴡ ɴᴏᴠᴇʟ ᴄʜᴀᴘᴛᴇʀs ᴀʀᴇ ᴘᴜʙʟɪsʜᴇᴅ ᴏɴ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ',
-                            'ɪꜰ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ʀᴇᴀᴅ ᴍᴏʀᴇ ᴄʜᴀᴘᴛᴇʀs, ᴘʟᴇᴀsᴇ ᴠɪsɪᴛ ꜰʀᴇᴇᴡᴇʙɴ(o)ᴠᴇʟ.ᴄᴏᴍ ᴛᴏ ᴇxᴘᴇʀɪᴇɴᴄᴇ ꜰᴀsᴛᴇʀ ᴜᴘᴅᴀᴛᴇ sᴘᴇᴇᴅ.',
-                            'ʀᴇᴀᴅ ʟᴀᴛᴇsᴛ ᴄʜᴀᴘᴛᴇʀs ᴀᴛ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄoᴍ ᴏɴʟʏ.',
-                            'ᴛʜɪs ᴄʜᴀᴘᴛᴇʀ ɪs ᴜᴘᴅᴀᴛᴇ ʙʏ ꜰʀᴇᴇᴡᴇʙɴ(o)ᴠᴇʟ. ᴄᴏᴍ.',
-                            'ᴜᴘᴅᴀᴛᴇ ꜰʀᴏᴍ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ.',
-                            'New novel chapters are published on  Freeᴡebn(ᴏ)vel.cᴏm.',
-                            'Follow current novels on  Freewebn(o)vel.com.',
-                            'This chapter is updated by  Freewebn(o)vel.cᴏm',
-                            'The source of this content is  Freeᴡebn(ᴏ)vel.cᴏm.',
-                            'Visit (Myb o xn ov e l. com) to read, pls!',
-                            'Continue reading on MYB0X N0 VEL. COM',
-                            'New novel chapters are published on Freewebnᴏvel.cᴏm',
-                            'Follow current novels on Freeᴡebnovel.cᴏm',
-                            'The source of this content is Freewebnᴏvel.com',
-                            'This chapter is updated by Freeᴡebnᴏvel.cᴏm',
-                            'Freeᴡebnᴏvel.cᴏm',
-                            'Freewebnᴏvel.com',
-                            'Freeᴡebnovel.cᴏm',
-                            'Freewebnᴏvel.cᴏm',
-                            'Freeᴡebn(ᴏ)vel.cᴏm',
-                            'Freewebn(o)vel.com',
-                            'Freewebn(o)vel.cᴏm',
-                            'ꜰʀᴇᴇᴡᴇʙɴoᴠᴇʟ.ᴄᴏᴍ',
-                            'ꜰʀᴇᴇ ᴡᴇʙ ɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ',
-                            'ꜰʀᴇᴇ ᴡᴇʙ ɴ(o)ᴠᴇʟ',
-                            'ꜰʀᴇᴇ ᴡᴇʙ ɴ(o)ᴠᴇʟ. ᴄoᴍ',
-                            'ꜰʀᴇᴇᴡᴇʙɴᴏᴠᴇʟ.ᴄᴏᴍ',
-                            'Visit (Mybo x novel. com) to read, pls!',
-                            'If you want to read more chapters, Please visit Libread.com to experience faster update speed',
-                            'If you want to read more chapters, Please visit Libread.com to experience faster update speed.',
-                            'Visit ʟɪʙʀᴇᴀᴅ.ᴄᴏᴍ for a better_user experience',
-                            'Visit ʟɪʙʀᴇᴀᴅ.ᴄoᴍ, for the best no_vel_read_ing experience',
-                            'The latest_epi_sodes are on_the ʟɪʙʀᴇᴀᴅ.ᴄᴏᴍ.website.',
-                            'New novel ᴄhapters are published on Libread.cᴏm.',
-                            'Follow current novels on Libread.ᴄom.',
-                            'The source of this ᴄontent is  Libread.com.',
-                            'This chapter is updated by  Libread.cᴏm.',
-                            'Support us at FreeWebNovel.Com.',
-                            'We are FreeWebNovel.Com, find us on google.',
-                            "When you're just trying to make great content at FreeWebNovel.Com.",
-                            "Find the original at FreeWebNovel.Com.",
-                            "This novel is available on FreeWebNovel.Com.",
-                            "Search FreeWebNovel.Com for the original.",
-                            "The Novel will be updated first on Freeᴡebnᴏvel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
-                            "The Novel will be updated first on Freeᴡebn(ᴏ)vel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
-                            "If you want to read more chapters, Please visit Freewebn(ᴏv)el. c0m to experience faster update speed.",
-                            "Theft is never good, try looking at FreeWebNovel.Com."
-                            
-                        ]
+                      
                         for (let tag_idx = 0; tag_idx < tags.length; tag_idx++) {
                             chapterDetail['chapter_content'] = chapterDetail['chapter_content'].replace(tags[tag_idx], "");
                             chapterDetail['chapter_content'] = chapterDetail['chapter_content'].replace(tags[tag_idx], "");
@@ -450,8 +449,6 @@ const getNovel = async function (config, callback) {
     });
 }
 
-// //https://freewebnovel.com/rebirth-ghost-exorciser-novel.html
-// getNovel('https://freewebnovel.com/rebirth-ghost-exorciser-novel.html');
 let countChapter = function (novel_id) {
     return new Promise(function (reslove, reject) {
         Chapter.count({ "novel.novel_id": novel_id }, function (err, count) {
@@ -485,7 +482,7 @@ const checkChapterExits = function (novel_id, chapter_id, chapter_name) {
                 { "novel.novel_id": novel_id, "chapter_name": new RegExp(`${chapterNumber.replace(`Chapter `,`Chapter `)}\\b`, 'i') },
 
                 { "novel.novel_id": novel_id, "chapter_name": new RegExp(`${chapterNumber}\\b`, 'i') },
-                { "novel.novel_id": novel_id, "chapter_content": new RegExp(`<(h3|h4|p)>${chapterNumber}\\b`, 'i') },
+                //{ "novel.novel_id": novel_id, "chapter_content": new RegExp(`<(h3|h4|p)>${chapterNumber}\\b`, 'i') },
                 { "novel.novel_id": novel_id, "chapter_name": new RegExp(`${chapter_name.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")}`, 'i') },
                 { "novel.novel_id": novel_id, "chapter_name": new RegExp(`${chapter_name.replace(`'`, `’`).replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")}`, 'i') }
             ]
@@ -533,25 +530,31 @@ const crawler_quece = new Queue(getNovel, { concurrent: 1 });
 crawler_quece.on('task_finish', async function (taskId, result, stats) {
     console.log(result)
 });
+if(process.env.TIME_CRAWLER) {
+    const job = schedule.scheduleJob(process.env.TIME_CRAWLER, async function() {
+        getNovelUrls(1,3);
+    });
+}
 
-const job = schedule.scheduleJob(process.env.TIME_CRAWLER, async function() {
-    getNovelUrls(1,3);
-});
+if(process.env.TIME_CRAWLER_2) {
+    const job_30_page = schedule.scheduleJob(process.env.TIME_CRAWLER_2, async function() {
+        getNovelUrls(4,34);
+    });
+}
 
-const job_30_page = schedule.scheduleJob(process.env.TIME_CRAWLER_2, async function() {
-    getNovelUrls(4,34);
-});
-
-const jobResetView = schedule.scheduleJob(process.env.TIME_RESET_VIEWTODAY, function() {
-    try {
-        Novel.updateMany({}, { viewToDay: 0 }, function(err, novels) {
-            if (!err) {
-                console.log("update thanh cong")
-            }
-        });
-    } catch (err) {
-
-    }
-});
+if(process.env.TIME_RESET_VIEWTODAY) {
+    const jobResetView = schedule.scheduleJob(process.env.TIME_RESET_VIEWTODAY, function() {
+        try {
+            Novel.updateMany({}, { viewToDay: 0 }, function(err, novels) {
+                if (!err) {
+                    console.log("update thanh cong")
+                }
+            });
+        } catch (err) {
+    
+        }
+    });
+    
+}
 
 module.exports = router;
