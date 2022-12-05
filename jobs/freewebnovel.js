@@ -14,8 +14,17 @@ const BASE_URL = 'https://libread.com/sort/latest-release-novel/';
 const CacheService = require('../cache/cache_service');
 const cacheHelper = new CacheService();
 const schedule = require('node-schedule');
-
+const request = require('request');
+const ftp = require("basic-ftp");
+const { Readable } = require('stream');
 const tags = [
+    '[Visit freewebnovel.com for the best novel reading experience]',
+    'Visit freewebnovel.com for a better experience',
+    'You can read the novel online free at freewebnovel.com',
+    'Read novel online free fast updates at freewebnovel.com',
+    'Sorry, content is lost, You are reading Novel on Freewebnovel.Com, we will fix it as soon as possible, thank you',
+    'For more, visit freewebnovel.com',
+    'Read novel fast updates at freewebnovel.com',
     'Thank you for reading on freewebnovel.com',
     'Read novel fast updates at Freewebnovel.com',
     'ɴᴇᴡ ɴᴏᴠᴇʟ ᴄʜᴀᴘᴛᴇʀs ᴀʀᴇ ᴘᴜʙʟɪsʜᴇᴅ ᴏɴ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ',
@@ -126,7 +135,7 @@ let download_banner = async function (comic_victim_url, file_name) {
 };
 router.get('/testJob', async function (req, res) {
     crawler_quece.push({
-        url: 'https://libread.com/novel/emperors-domination.html'
+        url: 'https://libread.com/novel/after-favorability-is-maxed.html'
     });
     return res.json({
         success: true,
@@ -313,6 +322,9 @@ const getNovel = async function (config, callback) {
                 console.log(`Them thanh cong novel ${novelInfo.novel_name}`)
             } else {
                 console.log(`Thong bao ${novelInfo.novel_name} da ton tai`);
+                const file_name = novelInfo['novel_id'];
+                download_banner(novelInfo.novel_victim_banner, file_name);
+
                 Novel.updateOne({ novel_id: novelInfo['novel_id'] }, {
                     hot: novelInfo['hot'],
                     new: novelInfo['new'],
