@@ -322,8 +322,8 @@ const getNovel = async function (config, callback) {
                 console.log(`Them thanh cong novel ${novelInfo.novel_name}`)
             } else {
                 console.log(`Thong bao ${novelInfo.novel_name} da ton tai`);
-                const file_name = novelInfo['novel_id'];
-                download_banner(novelInfo.novel_victim_banner, file_name);
+                // const file_name = novelInfo['novel_id'];
+                // download_banner(novelInfo.novel_victim_banner, file_name);
 
                 Novel.updateOne({ novel_id: novelInfo['novel_id'] }, {
                     hot: novelInfo['hot'],
