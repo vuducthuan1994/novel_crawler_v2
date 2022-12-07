@@ -18,6 +18,8 @@ const request = require('request');
 const ftp = require("basic-ftp");
 const { Readable } = require('stream');
 const tags = [
+    '<p><sub>Visit Freew(e)bnᴏvel. cᴏm , for the best novel reading experience.</sub></p>',
+    '<p><strong>If you want to read more chapters, Please visit Librёad.cᴏm tᴏ experience faster update speed. 👈</strong></p>',
     '<p><strong>If you want to read more chapters, Please visit Libread.com tᴏ experience faster update speed. 👈</strong></p>',
     '[Visit freewebnovel.com for the best novel reading experience]',
     'Visit freewebnovel.com for a better experience',
