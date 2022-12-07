@@ -521,14 +521,15 @@ const checkMissingChapter = async function(currentChapter) {
     const prevChapterName = prevChapter['chapter_name'];
     const pre_chapter_number = getChapterNumber(prevChapterName);
     let mess = ""
+    url_web = `https://novelbank.net/novelbank/${novel_id}`;
     if (isInt(current_chapter_number) &&  isInt(pre_chapter_number) && (current_chapter_number - pre_chapter_number > 1)){
-        mess = "Thieu chap o truoc chapter so " + current_chapter_number
+        mess = "Thieu chap o truoc chapter so " + current_chapter_number + "\n novel web : "+ url_web
     }else if (!isInt(current_chapter_number) &&  !isInt(pre_chapter_number) && (current_chapter_number - pre_chapter_number > 0.1)){
-        mess = "Thieu chap o truoc chapter so " + current_chapter_number
+        mess = "Thieu chap o truoc chapter so " + current_chapter_number + "\n novel web : "+ url_web
     }else if(currentChapter['chapter_content'].length < 1500){
-        mess = "nghi van noi dung thieu o chap so " + current_chapter_number
+        mess = "nghi van noi dung thieu o chap so " + current_chapter_number + "\n novel web : "+ url_web
     }else if (currentChapter['chapter_content'].slice(0,30) == prevChapter['chapter_content'].slice(0,30)){
-        mess = "nghi van noi dung thieu o 2 chap bi trung nhau cua chap so " + current_chapter_number + "va chap so: " + pre_chapter_number
+        mess = "nghi van noi dung thieu o 2 chap bi trung nhau cua chap so " + current_chapter_number + "va chap so: " + pre_chapter_number + "\n novel web : "+ url_web
     }
     if (mess != ""){
         sendTele(mess)
