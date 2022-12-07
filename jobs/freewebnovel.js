@@ -477,6 +477,15 @@ let countChapter = function (novel_id) {
         });
     })
 }
+
+const getChapterNumber = function(chapter_name) {
+    let result = null;
+    if (/(Chapter|chapter) ([+]?([0-9]*[.])?[0-9]+)/.test(`${chapter_name}`)) {
+        result = Number(/(.*?)Chapter ([+]?([0-9]*[.])?[0-9]+)/.exec(`${chapter_name}`)[0]);
+    }
+    return result;
+}
+
 const checkChapterExits = function (novel_id, chapter_id, chapter_name) {
     let chapterNumber = 'Chapter -1';
     if (/(.*?)Chapter ([+]?([0-9]*[.])?[0-9]+)/.test(`${chapter_name}`)) {
