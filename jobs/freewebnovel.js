@@ -498,6 +498,8 @@ const findPrevChapter = function (novel_id, crawler_date) {
 }
 
 const checkMissingChapter = async function(currentChapter) {
+    const novel_id = currentChapter['novel']['novel_id'];
+    const current_chapter_name = currentChapter['chapter_name'];
     
 }
 
