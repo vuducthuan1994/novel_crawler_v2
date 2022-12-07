@@ -485,6 +485,18 @@ const getChapterNumber = function(chapter_name) {
     }
     return result;
 }
+const findPrevChapter = function (novel_id, crawler_date) {
+    return new Promise(async function (reslove, reject) {
+            Chapter.findOne({ "novel.novel_id": novel_id, "crawler_date": { $lt: crawler_date } }, { chapter_id: 1, chapter_name: 1 }, function (err, chapter) {
+                if (!err && chapter) {
+                    reslove(chapter);
+                } else {
+                    reslove(null);
+                }
+            }).sort({ crawler_date: -1 }).lean();
+    });
+}
+
 
 const checkChapterExits = function (novel_id, chapter_id, chapter_name) {
     let chapterNumber = 'Chapter -1';
