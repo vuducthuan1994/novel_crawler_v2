@@ -397,6 +397,7 @@ const getNovel = async function (config, callback) {
                         Chapter.create(chapterDetail, function (err, data) {
                             if (!err) {
                                 console.log("Them moi thanh cong chapter");
+                                checkMissingChapter(chapterDetail)
                                 if (chapterDetail['chapter_content'].includes('Chapter content is missing')) {
                                     Reports.create({
                                         chapterId: chapterDetail['chapter_id'],
@@ -481,13 +482,13 @@ let countChapter = function (novel_id) {
 const getChapterNumber = function(chapter_name) {
     let result = null;
     if (/(Chapter|chapter) ([+]?([0-9]*[.])?[0-9]+)/.test(`${chapter_name}`)) {
-        result = Number(/(.*?)Chapter ([+]?([0-9]*[.])?[0-9]+)/.exec(`${chapter_name}`)[0]);
+        result = Number(/(.*?)Chapter ([+]?([0-9]*[.])?[0-9]+)/.exec(`${chapter_name}`)[2]);
     }
     return result;
 }
 const findPrevChapter = function (novel_id, crawler_date) {
     return new Promise(async function (reslove, reject) {
-            Chapter.findOne({ "novel.novel_id": novel_id, "crawler_date": { $lt: crawler_date } }, { chapter_id: 1, chapter_name: 1 }, function (err, chapter) {
+            Chapter.findOne({ "novel.novel_id": novel_id, "crawler_date": { $lt: crawler_date } }, { chapter_id: 1, chapter_name: 1,chapter_content: 1 }, function (err, chapter) {
                 if (!err && chapter) {
                     reslove(chapter);
                 } else {
@@ -496,11 +497,42 @@ const findPrevChapter = function (novel_id, crawler_date) {
             }).sort({ crawler_date: -1 }).lean();
     });
 }
-
+function isInt(n) {
+    return n % 1 === 0;
+}
+function sendTele(message) {
+    let chatId = process.env.ID_TELEGRAM_GROUP_FIX_ERROR ? process.env.ID_TELEGRAM_GROUP_FIX_ERROR : '-1001155937480'
+    let token = process.env.TOKEN_TELE_FIX_ERROR ? process.env.TOKEN_TELE_FIX_ERROR : '5428447083:AAFMoWUzUgxr5Wjup_YUwLELcsQg7XOrPCA'
+    return new Promise(function (reslove, reject) {
+        axios.get(`https://api.telegram.org/bot` + token + `/sendMessage?chat_id=` + chatId + `&text=` + utf8.encode(message))
+            .then(response => {
+                reslove(response)
+            })
+            .catch(error => {
+                reject(error);
+            });
+    })
+}
 const checkMissingChapter = async function(currentChapter) {
     const novel_id = currentChapter['novel']['novel_id'];
     const current_chapter_name = currentChapter['chapter_name'];
-    
+    const current_chapter_number = getChapterNumber(current_chapter_name);
+    let prevChapter = await findPrevChapter(novel_id,currentChapter['crawler_date']);
+    const prevChapterName = prevChapter['chapter_name'];
+    const pre_chapter_number = getChapterNumber(prevChapterName);
+    let mess = ""
+    if (isInt(current_chapter_number) &&  isInt(pre_chapter_number) && (current_chapter_number - pre_chapter_number > 1)){
+        mess = "Thieu chap o truoc chapter so " + current_chapter_number
+    }else if (!isInt(current_chapter_number) &&  !isInt(pre_chapter_number) && (current_chapter_number - pre_chapter_number > 0.1)){
+        mess = "Thieu chap o truoc chapter so " + current_chapter_number
+    }else if(currentChapter['chapter_content'].length < 1500){
+        mess = "nghi van noi dung thieu o chap so " + current_chapter_number
+    }else if (currentChapter['chapter_content'].slice(0,30) == prevChapter['chapter_content'].slice(0,30)){
+        mess = "nghi van noi dung thieu o 2 chap bi trung nhau cua chap so " + current_chapter_number + "va chap so: " + pre_chapter_number
+    }
+    if (mess != ""){
+        sendTele(mess)
+    }
 }
 
 
