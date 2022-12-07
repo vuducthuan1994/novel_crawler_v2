@@ -497,6 +497,10 @@ const findPrevChapter = function (novel_id, crawler_date) {
     });
 }
 
+const checkMissingChapter = async function(currentChapter) {
+    
+}
+
 
 const checkChapterExits = function (novel_id, chapter_id, chapter_name) {
     let chapterNumber = 'Chapter -1';
