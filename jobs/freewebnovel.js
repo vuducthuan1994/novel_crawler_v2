@@ -10,7 +10,7 @@ const slug = require('slug')
 const fs = require('fs')
 const express = require('express');
 const router = express.Router();
-const BASE_URL = 'https://libread.com/sort/latest-release-novel/';
+const BASE_URL = 'https://full.pcmanga.top/sort/latest-release-novel/';
 const CacheService = require('../cache/cache_service');
 const cacheHelper = new CacheService();
 const schedule = require('node-schedule');
@@ -138,7 +138,7 @@ let download_banner = async function (comic_victim_url, file_name) {
 };
 router.get('/testJob', async function (req, res) {
     crawler_quece.push({
-        url: 'https://libread.com/novel/after-favorability-is-maxed.html'
+        url: 'https://full.pcmanga.top/novel/my-vampire-little-sister.html'
     });
     return res.json({
         success: true,
@@ -298,7 +298,7 @@ const getNovel = async function (config, callback) {
         if (novel_on_db) {
             novelInfo['novel_id'] = novel_on_db.novel_id;
         }
-        const chapter_url = `https://libread.com/api/chapterlist.php?aid=${novelInfo['novel_victim_id']}&acode=${novelUrl.match(/.*\/(.*)$/)[1].replace('.html', '').trim()}&cid=1`
+        const chapter_url = `https://full.pcmanga.top/api/chapterlist.php?aid=${novelInfo['novel_victim_id']}&acode=${novelUrl.match(/.*\/(.*)$/)[1].replace('.html', '').trim()}&cid=1`
         await page.goto(chapter_url);
         let chapters = await page.evaluate(async () => {
             let chapters = [];
@@ -307,7 +307,7 @@ const getNovel = async function (config, callback) {
                 let chapterUrl = chapterItem.value.replaceAll('"', '').replaceAll('\\', '');
                 let chapterName = chapterItem.label.replace(`?C.`, 'Chapter ').replace('C.', 'Chapter ').replace("<\\/option>", '').replace("Chpater", "Chapter").replace('&#xFEFF;', '').trim();
                 chapters.push({
-                    chapter_url: `https://libread.com` + chapterUrl,
+                    chapter_url: `https://full.pcmanga.top` + chapterUrl,
                     chapter_name: chapterName.replace(`"}`, '')
                 })
             });
@@ -397,7 +397,7 @@ const getNovel = async function (config, callback) {
                         Chapter.create(chapterDetail, function (err, data) {
                             if (!err) {
                                 console.log("Them moi thanh cong chapter");
-                                checkMissingChapter(chapterDetail)
+                                //checkMissingChapter(chapterDetail)
                                 if (chapterDetail['chapter_content'].includes('Chapter content is missing')) {
                                     Reports.create({
                                         chapterId: chapterDetail['chapter_id'],
