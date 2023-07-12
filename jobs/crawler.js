@@ -395,7 +395,7 @@ const getChapters = async function (page, crawler_config, type = types_crawler.G
 
 
 
-// job_panda();
+job_panda();
 
 const init_crawler_config = async function () {
     const pandas = await Panda.find({}).lean();
