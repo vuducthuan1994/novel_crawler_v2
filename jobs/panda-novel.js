@@ -969,11 +969,11 @@ let getNewChapters = async function (page, novel_item, chapter_index = 1) {
 
             }
         } catch (error) {
-            // const elementHandle = await page.waitForSelector('iframe', { timeout: 20000 });
-            // const frame = await elementHandle.contentFrame();
-            // var captcha = await frame.waitForSelector('.mark', { timeout: 20000 });
-            // await captcha.evaluate(b => b.click());
-            // await page.waitForSelector('#novelArticle2 p:nth-child(4)');
+            const elementHandle = await page.waitForSelector('iframe', { timeout: 20000 });
+            const frame = await elementHandle.contentFrame();
+            var captcha = await frame.waitForSelector('.mark', { timeout: 20000 });
+            await captcha.evaluate(b => b.click());
+            await page.waitForSelector('#novelArticle2 p:nth-child(4)');
         }
 
         // try {
