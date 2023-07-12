@@ -163,7 +163,7 @@ const getChapters = async function (page, crawler_config, type = types_crawler.G
     const config = configs[domain];
     await page.goto(crawler_config.last_chapter_url);
     try {
-        await page.waitForSelector(config.load_done_selector, { timeout: 10000 });
+        await page.waitForSelector(config.load_done_selector, { timeout: 6000 });
     } catch (error) {
         if (config.cloudfare_checkbox) {
             try {
@@ -171,13 +171,14 @@ const getChapters = async function (page, crawler_config, type = types_crawler.G
                 const frame = await elementHandle.contentFrame();
                 var captcha = await frame.waitForSelector('.mark', { timeout: 100 });
                 await captcha.evaluate(b => b.click());
+                console.log("Da click checkbox")
             } catch (error) {
                 console.log("Lỗi click checkbox")
             }
 
         }
         try {
-            await page.waitForSelector(config.load_done_selector, { timeout: 30000 });
+            await page.waitForSelector(config.load_done_selector, { timeout: 6000 });
         } catch (error) {
             console.log(error, "Lỗi khi đợi load_done_selector lần 2")
             return 1;
@@ -188,7 +189,7 @@ const getChapters = async function (page, crawler_config, type = types_crawler.G
             await page.waitForSelector(config.cancel_popup_selector, { timeout: 1000 });
             await page.click(config.cancel_popup_selector);
         } catch (error) {
-            // console.log(error, "Lỗi khi đóng popup")
+             console.log(error, "Lỗi khi đóng popup")
         }
     }
     while (true) {
