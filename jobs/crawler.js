@@ -85,7 +85,7 @@ const job_panda = async function () {
     await page.setDefaultNavigationTimeout(200000);
     await page.setRequestInterception(true);
     page.on('request', (req) => {
-        if (req.resourceType() == 'font') {
+        if (req.resourceType() == 'font',req.resourceType() == 'css') {
             req.abort();
         } else {
             req.continue();
