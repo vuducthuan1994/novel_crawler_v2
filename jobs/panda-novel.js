@@ -962,16 +962,16 @@ let getNewChapters = async function (page, novel_item, chapter_index = 1) {
 
 
         try {
-            await page.waitForSelector('#novelArticle2 p:nth-child(4)', { timeout: 90000 });
+            await page.waitForSelector('#novelArticle2 p:nth-child(4)', { timeout: 5000 });
             try {
                 await page.click('button[i-id="cancel"]');
             } catch (error1) {
 
             }
         } catch (error) {
-            const elementHandle = await page.waitForSelector('iframe', { timeout: 20000 });
+            const elementHandle = await page.waitForSelector('iframe', { timeout: 1000 });
             const frame = await elementHandle.contentFrame();
-            var captcha = await frame.waitForSelector('.mark', { timeout: 20000 });
+            var captcha = await frame.waitForSelector('.mark', { timeout: 1000 });
             await captcha.evaluate(b => b.click());
             await page.waitForSelector('#novelArticle2 p:nth-child(4)');
         }
