@@ -162,8 +162,9 @@ const getChapters = async function (page, crawler_config, type = types_crawler.G
     const domain = helper.getDomainFromUrl(crawler_config.last_chapter_url);
     const config = configs[domain];
     await page.goto(crawler_config.last_chapter_url);
+
     try {
-        await page.waitForSelector(config.load_done_selector, { timeout: 6000 });
+        await page.waitForSelector(config.load_done_selector, { timeout: 10000 });
     } catch (error) {
         if (config.cloudfare_checkbox) {
             try {
@@ -178,12 +179,15 @@ const getChapters = async function (page, crawler_config, type = types_crawler.G
 
         }
         try {
-            await page.waitForSelector(config.load_done_selector, { timeout: 6000 });
+            await page.waitForSelector(config.load_done_selector, { timeout: 10000 });
         } catch (error) {
             console.log(error, "Lỗi khi đợi load_done_selector lần 2")
             return 1;
         }
     }
+
+
+
     if (config.cancel_popup_selector) {
         try {
             await page.waitForSelector(config.cancel_popup_selector, { timeout: 1000 });
