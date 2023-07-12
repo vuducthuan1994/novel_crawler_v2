@@ -845,7 +845,7 @@ let job = async function () {
     const browser = await puppeteer.launch({
         "headless": true,
         args: ["--no-sandbox", "--disabled-setupid-sandbox"],
-        executablePath: executablePath()
+        // executablePath: executablePath()
     });
 
 
