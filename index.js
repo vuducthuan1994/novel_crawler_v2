@@ -3,10 +3,18 @@ const app = express();
 const mongoose = require('mongoose');
 require('dotenv').config();
 const freewebnovel = require('./jobs/freewebnovel');
+const fixChapter = require('./jobs/fixMissChapter');
+
+const crawler = require('./jobs/crawler');
+
 const path = require('path');
 app.use('/freewebnovel', freewebnovel);
 
 
+const PandaNovel = require('./jobs/panda-novel');
+app.use('/panda-novel', PandaNovel);
+
+// const test = require('./jobs/test');
 
 mongoose.connect(process.env.DB_URL, {
     user: process.env.DB_USER,

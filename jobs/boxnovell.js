@@ -10,73 +10,74 @@ const slug = require('slug')
 const fs = require('fs')
 const express = require('express');
 const router = express.Router();
-const BASE_URL = 'https://full.pcmanga.top/sort/latest-release-novel/';
-const CacheService = require('../service/cache_service');
+const BASE_URL = 'https://boxnovel.com/page/';
+const CacheService = require('../cache/cache_service');
 const cacheHelper = new CacheService();
 const schedule = require('node-schedule');
 const request = require('request');
 const ftp = require("basic-ftp");
 const { Readable } = require('stream');
 const tags = [
-    '<p><sub>Visit Freew(e)bnᴏvel. cᴏm , for the best novel reading experience.</sub></p>',
-    '<p><strong>If you want to read more chapters, Please visit Librёad.cᴏm tᴏ experience faster update speed. 👈</strong></p>',
-    '<p><strong>If you want to read more chapters, Please visit Libread.com tᴏ experience faster update speed. 👈</strong></p>',
-    '[Visit freewebnovel.com for the best novel reading experience]',
-    'Visit freewebnovel.com for a better experience',
-    'You can read the novel online free at freewebnovel.com',
-    'Read novel online free fast updates at freewebnovel.com',
-    'Sorry, content is lost, You are reading Novel on Freewebnovel.Com, we will fix it as soon as possible, thank you',
-    'For more, visit freewebnovel.com',
-    'Read novel fast updates at freewebnovel.com',
-    'Thank you for reading on freewebnovel.com',
-    'Read novel fast updates at Freewebnovel.com',
-    'ɴᴇᴡ ɴᴏᴠᴇʟ ᴄʜᴀᴘᴛᴇʀs ᴀʀᴇ ᴘᴜʙʟɪsʜᴇᴅ ᴏɴ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ',
-    'ɪꜰ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ʀᴇᴀᴅ ᴍᴏʀᴇ ᴄʜᴀᴘᴛᴇʀs, ᴘʟᴇᴀsᴇ ᴠɪsɪᴛ ꜰʀᴇᴇᴡᴇʙɴ(o)ᴠᴇʟ.ᴄᴏᴍ ᴛᴏ ᴇxᴘᴇʀɪᴇɴᴄᴇ ꜰᴀsᴛᴇʀ ᴜᴘᴅᴀᴛᴇ sᴘᴇᴇᴅ.',
-    'ʀᴇᴀᴅ ʟᴀᴛᴇsᴛ ᴄʜᴀᴘᴛᴇʀs ᴀᴛ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄoᴍ ᴏɴʟʏ.',
-    'ᴛʜɪs ᴄʜᴀᴘᴛᴇʀ ɪs ᴜᴘᴅᴀᴛᴇ ʙʏ ꜰʀᴇᴇᴡᴇʙɴ(o)ᴠᴇʟ. ᴄᴏᴍ.',
-    'ᴜᴘᴅᴀᴛᴇ ꜰʀᴏᴍ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ.',
-    'New novel chapters are published on  Freeᴡebn(ᴏ)vel.cᴏm.',
-    'Follow current novels on  Freewebn(o)vel.com.',
-    'This chapter is updated by  Freewebn(o)vel.cᴏm',
-    'The source of this content is  Freeᴡebn(ᴏ)vel.cᴏm.',
-    'Visit (Myb o xn ov e l. com) to read, pls!',
-    'Continue reading on MYB0X N0 VEL. COM',
-    'New novel chapters are published on Freewebnᴏvel.cᴏm',
-    'Follow current novels on Freeᴡebnovel.cᴏm',
-    'The source of this content is Freewebnᴏvel.com',
-    'This chapter is updated by Freeᴡebnᴏvel.cᴏm',
-    'Freeᴡebnᴏvel.cᴏm',
-    'Freewebnᴏvel.com',
-    'Freeᴡebnovel.cᴏm',
-    'Freewebnᴏvel.cᴏm',
-    'Freeᴡebn(ᴏ)vel.cᴏm',
-    'Freewebn(o)vel.com',
-    'Freewebn(o)vel.cᴏm',
-    'ꜰʀᴇᴇᴡᴇʙɴoᴠᴇʟ.ᴄᴏᴍ',
-    'ꜰʀᴇᴇ ᴡᴇʙ ɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ',
-    'ꜰʀᴇᴇ ᴡᴇʙ ɴ(o)ᴠᴇʟ',
-    'ꜰʀᴇᴇ ᴡᴇʙ ɴ(o)ᴠᴇʟ. ᴄoᴍ',
-    'ꜰʀᴇᴇᴡᴇʙɴᴏᴠᴇʟ.ᴄᴏᴍ',
-    'Visit (Mybo x novel. com) to read, pls!',
-    'If you want to read more chapters, Please visit Libread.com to experience faster update speed',
-    'If you want to read more chapters, Please visit Libread.com to experience faster update speed.',
-    'Visit ʟɪʙʀᴇᴀᴅ.ᴄᴏᴍ for a better_user experience',
-    'Visit ʟɪʙʀᴇᴀᴅ.ᴄoᴍ, for the best no_vel_read_ing experience',
-    'The latest_epi_sodes are on_the ʟɪʙʀᴇᴀᴅ.ᴄᴏᴍ.website.',
-    'New novel ᴄhapters are published on Libread.cᴏm.',
-    'Follow current novels on Libread.ᴄom.',
-    'The source of this ᴄontent is  Libread.com.',
-    'This chapter is updated by  Libread.cᴏm.',
-    'Support us at FreeWebNovel.Com.',
-    'We are FreeWebNovel.Com, find us on google.',
-    "When you're just trying to make great content at FreeWebNovel.Com.",
-    "Find the original at FreeWebNovel.Com.",
-    "This novel is available on FreeWebNovel.Com.",
-    "Search FreeWebNovel.Com for the original.",
-    "The Novel will be updated first on Freeᴡebnᴏvel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
-    "The Novel will be updated first on Freeᴡebn(ᴏ)vel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
-    "If you want to read more chapters, Please visit Freewebn(ᴏv)el. c0m to experience faster update speed.",
-    "Theft is never good, try looking at FreeWebNovel.Com."
+    `Thank you for reading on myboxnovel.com`,
+   // '<p><sub>Visit Freew(e)bnᴏvel. cᴏm , for the best novel reading experience.</sub></p>',
+    // '<p><strong>If you want to read more chapters, Please visit Librёad.cᴏm tᴏ experience faster update speed. 👈</strong></p>',
+    // '<p><strong>If you want to read more chapters, Please visit Libread.com tᴏ experience faster update speed. 👈</strong></p>',
+    // '[Visit freewebnovel.com for the best novel reading experience]',
+    // 'Visit freewebnovel.com for a better experience',
+    // 'You can read the novel online free at freewebnovel.com',
+    // 'Read novel online free fast updates at freewebnovel.com',
+    // 'Sorry, content is lost, You are reading Novel on Freewebnovel.Com, we will fix it as soon as possible, thank you',
+    // 'For more, visit freewebnovel.com',
+    // 'Read novel fast updates at freewebnovel.com',
+    // 'Thank you for reading on freewebnovel.com',
+    // 'Read novel fast updates at Freewebnovel.com',
+    // 'ɴᴇᴡ ɴᴏᴠᴇʟ ᴄʜᴀᴘᴛᴇʀs ᴀʀᴇ ᴘᴜʙʟɪsʜᴇᴅ ᴏɴ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ',
+    // 'ɪꜰ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ʀᴇᴀᴅ ᴍᴏʀᴇ ᴄʜᴀᴘᴛᴇʀs, ᴘʟᴇᴀsᴇ ᴠɪsɪᴛ ꜰʀᴇᴇᴡᴇʙɴ(o)ᴠᴇʟ.ᴄᴏᴍ ᴛᴏ ᴇxᴘᴇʀɪᴇɴᴄᴇ ꜰᴀsᴛᴇʀ ᴜᴘᴅᴀᴛᴇ sᴘᴇᴇᴅ.',
+    // 'ʀᴇᴀᴅ ʟᴀᴛᴇsᴛ ᴄʜᴀᴘᴛᴇʀs ᴀᴛ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄoᴍ ᴏɴʟʏ.',
+    // 'ᴛʜɪs ᴄʜᴀᴘᴛᴇʀ ɪs ᴜᴘᴅᴀᴛᴇ ʙʏ ꜰʀᴇᴇᴡᴇʙɴ(o)ᴠᴇʟ. ᴄᴏᴍ.',
+    // 'ᴜᴘᴅᴀᴛᴇ ꜰʀᴏᴍ ꜰʀᴇᴇᴡᴇʙɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ.',
+    // 'New novel chapters are published on  Freeᴡebn(ᴏ)vel.cᴏm.',
+    // 'Follow current novels on  Freewebn(o)vel.com.',
+    // 'This chapter is updated by  Freewebn(o)vel.cᴏm',
+    // 'The source of this content is  Freeᴡebn(ᴏ)vel.cᴏm.',
+    // 'Visit (Myb o xn ov e l. com) to read, pls!',
+    // 'Continue reading on MYB0X N0 VEL. COM',
+    // 'New novel chapters are published on Freewebnᴏvel.cᴏm',
+    // 'Follow current novels on Freeᴡebnovel.cᴏm',
+    // 'The source of this content is Freewebnᴏvel.com',
+    // 'This chapter is updated by Freeᴡebnᴏvel.cᴏm',
+    // 'Freeᴡebnᴏvel.cᴏm',
+    // 'Freewebnᴏvel.com',
+    // 'Freeᴡebnovel.cᴏm',
+    // 'Freewebnᴏvel.cᴏm',
+    // 'Freeᴡebn(ᴏ)vel.cᴏm',
+    // 'Freewebn(o)vel.com',
+    // 'Freewebn(o)vel.cᴏm',
+    // 'ꜰʀᴇᴇᴡᴇʙɴoᴠᴇʟ.ᴄᴏᴍ',
+    // 'ꜰʀᴇᴇ ᴡᴇʙ ɴ(ᴏ)ᴠᴇʟ. ᴄᴏᴍ',
+    // 'ꜰʀᴇᴇ ᴡᴇʙ ɴ(o)ᴠᴇʟ',
+    // 'ꜰʀᴇᴇ ᴡᴇʙ ɴ(o)ᴠᴇʟ. ᴄoᴍ',
+    // 'ꜰʀᴇᴇᴡᴇʙɴᴏᴠᴇʟ.ᴄᴏᴍ',
+    // 'Visit (Mybo x novel. com) to read, pls!',
+    // 'If you want to read more chapters, Please visit Libread.com to experience faster update speed',
+    // 'If you want to read more chapters, Please visit Libread.com to experience faster update speed.',
+    // 'Visit ʟɪʙʀᴇᴀᴅ.ᴄᴏᴍ for a better_user experience',
+    // 'Visit ʟɪʙʀᴇᴀᴅ.ᴄoᴍ, for the best no_vel_read_ing experience',
+    // 'The latest_epi_sodes are on_the ʟɪʙʀᴇᴀᴅ.ᴄᴏᴍ.website.',
+    // 'New novel ᴄhapters are published on Libread.cᴏm.',
+    // 'Follow current novels on Libread.ᴄom.',
+    // 'The source of this ᴄontent is  Libread.com.',
+    // 'This chapter is updated by  Libread.cᴏm.',
+    // 'Support us at FreeWebNovel.Com.',
+    // 'We are FreeWebNovel.Com, find us on google.',
+    // "When you're just trying to make great content at FreeWebNovel.Com.",
+    // "Find the original at FreeWebNovel.Com.",
+    // "This novel is available on FreeWebNovel.Com.",
+    // "Search FreeWebNovel.Com for the original.",
+    // "The Novel will be updated first on Freeᴡebnᴏvel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
+    // "The Novel will be updated first on Freeᴡebn(ᴏ)vel. cᴏm . Come back and continue reading tomorrow, everyone!😉",
+    // "If you want to read more chapters, Please visit Freewebn(ᴏv)el. c0m to experience faster update speed.",
+    // "Theft is never good, try looking at FreeWebNovel.Com."
 ]
 
 const writeLog = function (msg) {
@@ -124,7 +125,7 @@ let download_banner = async function (comic_victim_url, file_name) {
         let data = await getDataFromUrlImage(comic_victim_url);
         await client.uploadFrom(data, `image_service/public/novel/${file_name}.jpg`);
         const request = require('request');
-        request(`http://${process.env.FTP_HOST}:6223/resizeImage/${file_name}.jpg`, { json: true }, (err, res, body) => {
+        request(`http://${process.env.FTP_HOST}:6200/resizeImage/${file_name}.jpg`, { json: true }, (err, res, body) => {
             if (!err) {
                 console.log(" Nhan doi anh thanh cong");
             }
@@ -138,61 +139,7 @@ let download_banner = async function (comic_victim_url, file_name) {
 };
 router.get('/testJob', async function (req, res) {
     crawler_quece.push({
-        url :'https://full.pcmanga.top/novel/paragon-of-sin.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/overgeared-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/absolute-resonance.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/almighty-sword-domain.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/beastmaster-of-the-ages-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/emperors-domination.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/invincible-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/keyboard-immortal-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/life-once-again-wn.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/martial-god-asura-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/necropolis-immortal.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/nine-star-hegemon-body-arts.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/past-life-returner.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/spirit-vessel-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/star-odyssey.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/the-frozen-player-returns.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/the-return-of-the-disaster-class-hero.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/the-sovereigns-ascension.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/to-hell-with-being-a-hero.html'
+        url: 'https://boxnovel.com/novel/my-checkpoint-system-turned-me-into-the-godfather-of-humanity/'
     });
     return res.json({
         success: true,
@@ -238,10 +185,10 @@ const getNovelUrls = async function (from, to) {
             await page.goto(`${BASE_URL}${page_index}`);
             const novelUrls = await page.evaluate(() => {
                 let results = [];
-                const novelUrls = document.querySelectorAll('.ss-custom .li-row .li');
+                const novelUrls = document.querySelectorAll('.row-eq-height .badge-pos-1');
                 novelUrls.forEach((novel) => {
                     try {
-                        results.push(novel.querySelector('h3.tit a').href);
+                        results.push(novel.querySelector('h3.h5 a').href);
                     } catch (err) {
                         console.log(err)
                     }
@@ -272,68 +219,76 @@ const getNovel = async function (config, callback) {
     const page = await browser.newPage();
     await page.setRequestInterception(true);
     await page.setDefaultNavigationTimeout(30000);
+
     page.on('request', (req) => {
-        if (req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType() === "script") {
+        // req.continue();
+        if (req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image') {
             req.abort();
         } else {
             req.continue();
         }
     });
+
     try {
         await page.goto(novelUrl);
-        await page.waitForSelector(".m-desc h1", { timeout: 10000 });
+        await page.waitForSelector(".c-chapter-readmore", { timeout: 10000 });
         let novelInfo = await page.evaluate(async () => {
+            document.querySelectorAll("div script").forEach(el => el.remove());
+            const novel_victim_banner = document.querySelector('.summary_image img').src || '';
 
-            const novel_victim_banner = document.querySelector('.m-imgtxt .pic img').src || '';
-            const novel_name = document.querySelector(".m-desc h1.tit").innerText || '';
+            const novel_name = document.querySelector(".post-title h1").innerText || '';
             let novel_other_name = '';
             let novel_author = '';
             let novel_status = 1;
             let novel_genres = [];
             let novel_source = '';
-            let temp = novel_victim_banner.split("/");
-            let novel_victim_id = temp[temp.length - 1].replace("s.jpg", "");
-            let isHot = (document.querySelector(".m-newest .col-l ul li:first-child .item span") && document.querySelector(".m-newest .col-l ul li:first-child .item span").innerText == 'HOT') ? true : false;
-            let isNew = (document.querySelector(".m-newest .col-l ul li:first-child .item span") && document.querySelector(".m-newest .col-l ul li:first-child .item span").innerText == 'NEW') ? true : false;
+            if(document.querySelector('.post-status .summary-content') && document.querySelector('.post-status .summary-content').innerText.trim() == 'OnGoing') {
+                novel_status = 0;
+            }
 
-            let meta_info = document.querySelectorAll('.m-imgtxt .txt .item');
+            let isHot = (document.querySelector(".manga-title-badges") && document.querySelector(".manga-title-badges").innerText == 'HOT') ? true : false;
+            let isNew = (document.querySelector(".manga-title-badges") && document.querySelector(".manga-title-badges").innerText == 'NEW') ? true : false;
+
+            let meta_info = document.querySelectorAll('.post-content .post-content_item');
             meta_info.forEach(meta_item => {
-                if (meta_item.querySelector('span.glyphicon').title.trim() == 'Alternative names') {
-                    novel_other_name = meta_item.querySelector('.right span') ? meta_item.querySelector('.right span').innerText.trim() : '';
+                // if (meta_item.querySelector('.summary-heading h5').innerText.trim() == 'Alternative names') {
+                //     novel_other_name = meta_item.querySelector('.right span') ? meta_item.querySelector('.right span').innerText.trim() : '';
+                // }
+                if (meta_item.querySelector('.summary-heading h5').innerText.trim() == 'Author(s)') {
+                    novel_author = meta_item.querySelector('.author-content a') ? meta_item.querySelector('.author-content a').innerText.trim() : '';
                 }
-                if (meta_item.querySelector('span.glyphicon').title.trim() == 'Author') {
-                    novel_author = meta_item.querySelector('.right a') ? meta_item.querySelector('.right a').innerText.trim() : '';
+                if (meta_item.querySelector('.summary-heading h5').innerText.trim() == 'Type') {
+                    novel_source = meta_item.querySelector('.summary-content') ? meta_item.querySelector('.summary-content').innerText.trim() : '';
                 }
-                if (meta_item.querySelector('span.glyphicon').title.trim() == 'Source') {
-                    novel_source = meta_item.querySelector('.right span') ? meta_item.querySelector('.right span').innerText.trim() : '';
-                }
-                if (meta_item.querySelector('span.glyphicon').title.trim() == 'Status') {
-                    if (meta_item.querySelector('a').innerText.trim() == 'OnGoing') {
-                        novel_status = 0;
-                    }
-                }
-                if (meta_item.querySelector('span.glyphicon').title.trim() == 'Genre') {
-                    let genresContainer = meta_item.querySelectorAll('a');
+            
+                if (meta_item.querySelector('.summary-heading h5').innerText.trim() == 'Genre(s)') {
+                    let genresContainer = meta_item.querySelectorAll('.genres-content a');
                     genresContainer.forEach(genreItem => {
                         let genreId = genreItem.innerText.toUpperCase().trim();
                         novel_genres.push(genreId);
                     });
                 }
             });
-            const novel_desc = document.querySelector('.m-desc .txt .inner').innerText;
-            let avgPointType2 = 7;
-            let voteCountType2 = 35;
-            let votes = document.querySelector('.score .vote').innerText;
-            if (votes.includes('votes')) {
-                avgPointType2 = Number(votes.split('/')[0]) * 2;
-                voteCountType2 = Number(votes.split('(')[1].replace(/\D/g, ''));
-            }
-
+            let novel_desc = document.querySelector('.description-summary .description-summary') ? document.querySelector('.description-summary .description-summary').innerHTML : '';
+            novel_desc = novel_desc.replace('Thank you for reading on myboxnovel.com','');
+            novel_desc = novel_desc.replace('on BOXNOVEL','');
+            let avgPointType2 = 8;
+            let voteCountType2 = 1;
+            let chapters = [];
+            let chapterContainers = document.querySelectorAll('.main.version-chap li a');
+            chapterContainers.forEach(chapterItem => {
+                let chapterUrl = chapterItem.href.trim();
+                let chapterName = chapterItem.innerText.trim();
+                chapters.push({
+                    chapter_url:  chapterUrl,
+                    chapter_name: chapterName.replace(`"}`, '')
+                })
+            });
+            chapters = chapters.reverse();
             return {
                 novel_victim_banner: novel_victim_banner,
                 novel_author: novel_author,
                 novel_source: novel_source,
-                novel_victim_id: novel_victim_id,
                 novel_other_name: novel_other_name,
                 novel_status: novel_status,
                 novel_genres: novel_genres,
@@ -342,34 +297,18 @@ const getNovel = async function (config, callback) {
                 voteCountType2: voteCountType2,
                 novel_name: novel_name,
                 hot: isHot,
-                new: isNew
+                new: isNew,
+                chapters : chapters
             };
         });
-        novelInfo['novel_id'] = novelUrl.match(/.*\/(.*)$/)[1].replace('.html', '').trim();
+        novelInfo['novel_id'] = slug(novelInfo['novel_name']);
+        // console.log(novelInfo)
         novelInfo['onDb'] = true;
         let novel_on_db = await checkNovelExits(novelInfo['novel_name'].trim(), novelInfo['novel_id']);
-
         if (novel_on_db) {
             novelInfo['novel_id'] = novel_on_db.novel_id;
         }
-        const chapter_url = `https://full.pcmanga.top/api/chapterlist.php?aid=${novelInfo['novel_victim_id']}&acode=${novelUrl.match(/.*\/(.*)$/)[1].replace('.html', '').trim()}&cid=1`
-        await page.goto(chapter_url);
-        let chapters = await page.evaluate(async () => {
-            let chapters = [];
-            let chapterContainers = document.querySelectorAll('option');
-            chapterContainers.forEach(chapterItem => {
-                let chapterUrl = chapterItem.value.replaceAll('"', '').replaceAll('\\', '');
-                let chapterName = chapterItem.label.replace(`?C.`, 'Chapter ').replace('C.', 'Chapter ').replace("<\\/option>", '').replace("Chpater", "Chapter").replace('&#xFEFF;', '').trim();
-                chapters.push({
-                    chapter_url: `https://full.pcmanga.top` + chapterUrl,
-                    chapter_name: chapterName.replace(`"}`, '')
-                })
-            });
-            return chapters;
-        })
-        novelInfo['chapters'] = chapters;
         novelInfo['crawler_date'] = new Date();
-        novelInfo['totalChapter'] = chapters.length;
         Novel.create(novelInfo, function (err, data) {
             if (!err) {
                 if (novelInfo.novel_victim_banner) {
@@ -386,26 +325,26 @@ const getNovel = async function (config, callback) {
                     hot: novelInfo['hot'],
                     new: novelInfo['new'],
                     totalChapter: novelInfo.chapters.length,
-                    novel_status: novelInfo['novel_status']
+                    //novel_status: novelInfo['novel_status']
                 }, function (err, res) {
-                    // if (!err) {
-                    //     console.log("CAP NHAT HOT NEW THANH CONG !")
-                    // }
+                    if (!err) {
+                        console.log("CAP NHAT HOT NEW THANH CONG !")
+                    }
                 })
             }
         });
         let total_chapter_crawler = await countChapter(novelInfo['novel_id']);
         console.log(`TONG SO CHAPTER ${novelInfo['novel_name']} DA CAO`, total_chapter_crawler);
         console.log(`TONG SO CHAPTER ${novelInfo['novel_name']} VICTIM`, novelInfo.chapters.length);
-        if(process.env.ENV == 'DEV') {
-            if(total_chapter_crawler < novelInfo.chapters.length) {
-                writeLog(`TONG SO CHAPTER ${novelInfo['novel_name']} DA CAO ${total_chapter_crawler}`);
-                writeLog(`TONG SO CHAPTER ${novelInfo['novel_name']} VICTIM ${novelInfo.chapters.length}`)
-                writeLog(`\n`);
-            }
-        }
+        // if(process.env.ENV == 'DEV') {
+        //     if(total_chapter_crawler < novelInfo.chapters.length) {
+        //         writeLog(`TONG SO CHAPTER ${novelInfo['novel_name']} DA CAO ${total_chapter_crawler}`);
+        //         writeLog(`TONG SO CHAPTER ${novelInfo['novel_name']} VICTIM ${novelInfo.chapters.length}`)
+        //         writeLog(`\n`);
+        //     }
+        // }
       
-        // total_chapter_crawler = total_chapter_crawler - 3
+
         for (let j = total_chapter_crawler; j < novelInfo.chapters.length; j++) {
             const chapter_victim_url = novelInfo.chapters[j].chapter_url;
             const chapter_id = chapter_victim_url.match(/.*\/(.*)$/)[1].replace('.html', '').trim();
@@ -415,25 +354,29 @@ const getNovel = async function (config, callback) {
             }
             if (!checkChapter) {
                 try {
-                    await page.setUserAgent(userAgent.toString())
+                    // await page.setUserAgent(userAgent.toString())
                     await page.goto(chapter_victim_url, { timeout: 30000 });
+                    await page.waitForSelector(".entry-content p", { timeout: 5000 });
                     let chapterDetail = await page.evaluate(async () => {
-                        document.querySelectorAll("div[style = 'margin-top: 5px; margin-bottom: 5px;']").forEach(el => el.remove());
-                        document.querySelectorAll("#pf-6282088417d0810027b05464").forEach(el => el.remove());
-                        document.querySelectorAll(".ads-holder").forEach(el => el.remove());
-                        document.querySelectorAll('.txt a').forEach(el => el.remove());
-                        document.querySelectorAll('.txt .ul-list7').forEach(el => el.remove());
-                        document.querySelectorAll('.txt .tips').forEach(el => el.remove());
-                        document.querySelectorAll('.txt p sub').forEach(el => el.remove());
+                        document.querySelectorAll(".text-left div div").forEach(el => el.remove());
+                        document.querySelectorAll(".text-left script").forEach(el => el.remove());
+                        // document.querySelectorAll("#pf-6282088417d0810027b05464").forEach(el => el.remove());
+                        // document.querySelectorAll(".ads-holder").forEach(el => el.remove());
+                        // document.querySelectorAll('.txt a').forEach(el => el.remove());
+                        // document.querySelectorAll('.txt .ul-list7').forEach(el => el.remove());
+                        // document.querySelectorAll('.txt .tips').forEach(el => el.remove());
+                        // document.querySelectorAll('.txt p sub').forEach(el => el.remove());
 
-                        let chapter_name = document.querySelector('.top span.chapter').innerText.trim();
-                        chapter_name = chapter_name.trim().replace(`&#xFEFF;`, '').trim();
-                        const chapter_content = document.querySelector('.txt') ? document.querySelector('.txt').innerHTML.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').replace(/<!--.*?-->/sg, "") : '';
+                        // let chapter_name = document.querySelector('.top span.chapter').innerText.trim();
+                        // chapter_name = chapter_name.trim().replace(`&#xFEFF;`, '').trim();
+
+                        const chapter_content = document.querySelector('.read-container .text-left') ? document.querySelector('.read-container .text-left').innerHTML.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').replace(/<!--.*?-->/sg, "") : 'Chapter content is missing';
                         return {
-                            chapter_name: chapter_name,
+                            // chapter_name: chapter_name,
                             chapter_content: chapter_content
                         }
                     });
+                    chapterDetail['chapter_name'] = novelInfo.chapters[j].chapter_name.trim();
                     chapterDetail['chapter_id'] = slug(`c${chapterDetail.chapter_name}`);
                     chapterDetail['crawler_date'] = new Date()
                     chapterDetail['novel'] = {
@@ -441,6 +384,7 @@ const getNovel = async function (config, callback) {
                         novel_name: novelInfo['novel_name']
                     }
                     let __idx = j;
+                    // console.log(chapterDetail['chapter_content'], "chapterDetail['chapter_content']")
                     if (chapterDetail['chapter_content'].length || chapterDetail['chapter_content'].includes('img')) {
                       
                         for (let tag_idx = 0; tag_idx < tags.length; tag_idx++) {
@@ -452,11 +396,11 @@ const getNovel = async function (config, callback) {
                             if (!err) {
                                 console.log("Them moi thanh cong chapter");
                                 //checkMissingChapter(chapterDetail)
-                                if (chapterDetail['chapter_content'].includes('Chapter content is missing')) {
+                                if (chapterDetail['chapter_content'].length <= 1500) {
                                     Reports.create({
                                         chapterId: chapterDetail['chapter_id'],
                                         reason: 'Chapter content is missing',
-                                        url: `https://novelbin.com/b/${chapterDetail['novel'].novel_id}/${chapterDetail['chapter_id']}`
+                                        url: `https://novelbank.net/novelbank/${chapterDetail['novel'].novel_id}/${chapterDetail['chapter_id']}`
                                     }, function (err, data) {
                                         if (!err) {
                                             console.log("Bao loi thanh cong")
@@ -499,11 +443,9 @@ const getNovel = async function (config, callback) {
                 }
             } else {
                 console.log(`chapter da ton tai || ${novelInfo['novel_name']} || ${checkChapter.chapter_name}`);
-                // writeLog(`TONG SO CHAPTER ${novelInfo['novel_name']} DA CAO ${total_chapter_crawler}`);
-                // writeLog(`TONG SO CHAPTER ${novelInfo['novel_name']} VICTIM ${novelInfo.chapters.length}`)
-                // writeLog(`\n`);
             }
         }
+
         console.log(`Novel Name: ${novelInfo.novel_name} XỬ LÝ XONG`)
 
     } catch (error) {
@@ -639,6 +581,7 @@ let checkNovelExits = function (novel_name, novel_id) {
             $or: [
                 { novel_name: new RegExp(`^${novel_name.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")}$`, 'i') },
                 { novel_name: new RegExp(`^${novel_name.replace(`'`, `’`).replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")}$`, 'i') },
+                { novel_name: new RegExp(`^${novel_name.replace(`’`, `'`).replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")}$`, 'i') },
                 { novel_name: novel_name },
                 { novel_id: novel_id.trim() },
 
@@ -687,59 +630,5 @@ if(process.env.TIME_RESET_VIEWTODAY) {
     });
     
 }
-
-const job2 = schedule.scheduleJob('*/59 * * * *', async function () { 
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/absolute-resonance.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/almighty-sword-domain.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/beastmaster-of-the-ages-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/emperors-domination.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/invincible-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/keyboard-immortal-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/life-once-again-wn.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/martial-god-asura-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/necropolis-immortal.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/nine-star-hegemon-body-arts.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/past-life-returner.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/spirit-vessel-novel.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/star-odyssey.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/the-frozen-player-returns.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/the-return-of-the-disaster-class-hero.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/the-sovereigns-ascension.html'
-    });
-    crawler_quece.push({
-        url: 'https://full.pcmanga.top/novel/to-hell-with-being-a-hero.html'
-    });
-})
 
 module.exports = router;

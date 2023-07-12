@@ -7,17 +7,22 @@ const REDIS_HOST = process.env.REDIS_HOST || '10.116.0.10';
 const clientRedis = redis.createClient({
     url: `redis://:${REDIS_PASSWORD}@${REDIS_HOST}:6379`
 });
-clientRedis.on('connect', function() {
+
+clientRedis.on('connect', function () {
     console.log('Connected to Redis');
 });
 
-clientRedis.on('error', function(err) {
+clientRedis.on('error', function (err) {
     // console.log('Redis connect get error !', err);
 });
 const DB_NUMBER = process.env.DB_NUMBER || 2;
 
-const connectRedis = async function() {
-    await clientRedis.connect();
+const connectRedis = async function () {
+    try {
+        await clientRedis.connect();
+    } catch (error) {
+
+    }
 }
 
 class CacheService {
@@ -29,7 +34,7 @@ class CacheService {
         clientRedis.set(`${DB_NUMBER}-${key}`, JSON.stringify(value), optionsCache);
     }
     get(key) {
-        return new Promise(async function(reslove, reject) {
+        return new Promise(async function (reslove, reject) {
             try {
                 const result = await clientRedis.get(`${DB_NUMBER}-${key}`);
                 if (result) {

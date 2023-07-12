@@ -77,6 +77,10 @@ var NovelSchema = new Schema({
         type: Boolean,
         default: false
     },
+    isPanda: {
+        type: Boolean,
+        default: true
+    },
     novel_genres: {
         type: Array,
         required: true
