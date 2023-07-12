@@ -397,23 +397,23 @@ const getChapters = async function (page, crawler_config, type = types_crawler.G
 
 // job_panda();
 
-// const init_crawler_config = async function () {
-//     const pandas = await Panda.find({}).lean();
-//     for (let i = 0; i < pandas.length; i++) {
-//         const item = pandas[i];
-//         const url = item.last_chapter_url;
-//         if (url.includes('webnovelpub.com')) {
-//             await CrawlerConfig.create({
-//                 novel_name: item.novel_name,
-//                 last_chapter_url: url,
-//                 view: 0,
-//                 domain: 'webnovelpub.com'
-//             })
-//         } else {
-//             console.log(url)
-//         }
-//     }
-// }
+const init_crawler_config = async function () {
+    const pandas = await Panda.find({}).lean();
+    for (let i = 0; i < pandas.length; i++) {
+        const item = pandas[i];
+        let url = item.last_chapter_url;
+        url = url.replace('panda-novel.com','lightnovel-pub.com');
+        url = url.replace('zebranovel.com','lightnovel-pub.com');
+        if(url.includes('lightnovel-pub.com')) {
+               await CrawlerConfig.create({
+                novel_name: item.novel_name,
+                last_chapter_url: url,
+                view: 0,
+                domain: 'lightnovel-pub.com'
+            })
+        }
+    }
+}
 // init_crawler_config()
 
 

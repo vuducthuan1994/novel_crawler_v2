@@ -962,7 +962,7 @@ let getNewChapters = async function (page, novel_item, chapter_index = 1) {
 
 
         try {
-            await page.waitForSelector('#novelArticle2 p:nth-child(4)', { timeout: 5000 });
+            await page.waitForSelector('#novelArticle2 p:nth-child(4)', { timeout: 4000 });
             try {
                 await page.click('button[i-id="cancel"]');
             } catch (error1) {

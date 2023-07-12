@@ -160,7 +160,14 @@ const logos = [
     'pan,da n&lt;0,&gt;v,el',
     'p<anda>',
     '</anda>',
-    '-n0ve1、com'
+    '-n0ve1、com',
+    'ƥαṇdαsηθνε|',
+    'ραпdαs `nᴏνɐ| сom',
+    'ƥαṇdαsηθνε|·ƈθm',
+    'ƥαṇdαs ηθνε|·ƈθm ﻿',
+    'ƥαṇdαs ηθνε|·ƈθm',
+    'Discord link for quickest updates of your favorite novels:  https://discord.gg/novelcommunity</p>',
+    '<p>Discord link for Pandanovel, for quick updates &gt; https://discord.gg/Gmb86aUSFP</p>'
 ]
 
 module.exports = logos;
