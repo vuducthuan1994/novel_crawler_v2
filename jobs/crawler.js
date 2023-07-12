@@ -78,12 +78,8 @@ job_new_link();
 const job_panda = async function () {
     const browser = await puppeteer.launch({
         "headless": true,
-        args: [
-            '--window-size=1920,1080',
-            '--disable-dev-profile',
-            '--no-sandbox',
-            '--disable-web-security'
-        ]
+        args: ["--no-sandbox", "--disabled-setupid-sandbox"],
+        // executablePath: executablePath(),
     });
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(200000);
