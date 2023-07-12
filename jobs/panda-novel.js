@@ -895,7 +895,7 @@ let job = async function () {
 
 
 
-    const isStart = await startJob();
+    const isStart = 1
     if (isStart == '1' || isStart == '2') {
         let results = [];
 
@@ -915,8 +915,8 @@ let job = async function () {
             console.log(`Hiện đang có tổng ${results.length} truyện lấy từ mảng array !`)
         }
 
-        let start = await getStart();
-        let end = await getEnd();
+        let start = 0;
+        let end = results.length;
         if (Number.isInteger(start) && Number.isInteger(end)) {
 
         } else {
