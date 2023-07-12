@@ -21,7 +21,7 @@ const schedule = require('node-schedule');
 const userAgent = require('user-agents');
 const { Readable } = require('stream');
 const ftp = require("basic-ftp");
-
+const {executablePath} = require('puppeteer');
 const labels = [
     'Discord link for quickest updates of your favourate novels: https://discord.gg/novelcommunity',
     'Discord link for Pandanovel, for quick updates > https://discord.gg/Gmb86aUSFP',
@@ -844,13 +844,8 @@ let getNewsNovel = async function () {
 let job = async function () {
     const browser = await puppeteer.launch({
         "headless": true,
-        args: [
-            '--window-size=1920,1080', // Kích thước cửa sổ trình duyệt
-            // '--no-sandbox', // Vô hiệu hóa chế độ sandbox
-            // '--disable-infobars', // Vô hiệu hóa thanh thông tin
-            // '--disable-extensions', // Vô hiệu hóa các tiện ích mở rộng
-            // '--disable-dev-shm-usage' // Vô hiệu hóa sử dụng bộ nhớ chia sẻ tạm thời
-        ]
+        args: ["--no-sandbox", "--disabled-setupid-sandbox"],
+        executablePath: executablePath()
     });
 
 
