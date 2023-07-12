@@ -399,7 +399,7 @@ const job1 = schedule.scheduleJob('*/40 * * * *', async function () {
 
 
 
-// job_panda();
+job_panda();
 
 // const init_crawler_config = async function () {
 //     const pandas = await Panda.find({}).lean();
