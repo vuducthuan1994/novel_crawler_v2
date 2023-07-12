@@ -393,9 +393,9 @@ const getChapters = async function (page, crawler_config, type = types_crawler.G
     return 1;
 }
 
-const job1 = schedule.scheduleJob('*/40 * * * *', async function () { 
-    job_lightnovelpub()
-})
+// const job1 = schedule.scheduleJob('*/40 * * * *', async function () { 
+//     job_lightnovelpub()
+// })
 
 
 
