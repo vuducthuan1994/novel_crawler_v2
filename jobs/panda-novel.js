@@ -843,7 +843,7 @@ let getNewsNovel = async function () {
 
 let job = async function () {
     const browser = await puppeteer.launch({
-        "headless": false,
+        "headless": true,
         args: [
             '--window-size=1920,1080', // Kích thước cửa sổ trình duyệt
             // '--no-sandbox', // Vô hiệu hóa chế độ sandbox
@@ -855,7 +855,6 @@ let job = async function () {
 
 
     const page = await browser.newPage();
-    await page.setCookie(...cookie);
     await page.setDefaultNavigationTimeout(200000);
     // await page.setRequestInterception(true);
     // page.on('request', (req) => {
@@ -877,9 +876,6 @@ let job = async function () {
     // await page.setExtraHTTPHeaders({
     //     'Accept-Language': 'en-US,en;q=0.9',
     // });
-
-    const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
-    await page.setUserAgent(userAgent);
     await page.goto('https://www.zebranovel.com/top');
     await page.waitForSelector(".app-logo a", { timeout: 10000 });
 
